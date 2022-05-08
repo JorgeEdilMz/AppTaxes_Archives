@@ -26,14 +26,23 @@ public class Presenter {
         initMenu();
     }
 
-    public void loadPropertiesFile() throws IOException {
-        properties.load(new FileReader(this.PATH_FILE_PROPERTIES));
+    public void loadPropertiesFile() {
+        try {
+            properties.load(new FileReader(this.PATH_FILE_PROPERTIES));
+        } catch (IOException e) {
+            io.showGraphicMessage("The file wasn't founded");
+        }
         this.loadProperties();
         this.readArchive();
     }
 
-    public void readArchive() throws IOException {
-        ArrayList<Property> properties = archives.loadLandsBoyaca();
+    public void readArchive() {
+        ArrayList<Property> properties = new ArrayList<>();
+        try {
+            properties = archives.loadLandsBoyaca();
+        } catch (IOException e) {
+            io.showGraphicMessage("The file wasn't founded");
+        }
         for (Property property : properties) {
             tax.addProperty(property);
         }
@@ -79,7 +88,7 @@ public class Presenter {
         tax.addCommercialRange(new CommercialRate(commercialRange5+1,commercialRange6,rateCommercialRange6));
     }
 
-    public void initMenu() throws IOException {
+    public void initMenu(){
         short menuOption;
         do {
             menuOption = io.showMainMenu();
@@ -119,7 +128,7 @@ public class Presenter {
         }while (menuOption != 10);
     }
 
-    public void addLand() throws IOException {
+    public void addLand()  {
         long cadastralNumber =  io.readLongGraphics("Enter the cadastral number: ");
         String address = io.readStringGraphics("Enter the address: ");
         double area = io.readDoubleGraphics("Enter the area: ");
@@ -127,8 +136,12 @@ public class Presenter {
         Use use = this.showMenuUse();
         double appraisal = io.readDoubleGraphics("Enter the appraisal: ");
         Object[] dataLand = {"15","001",cadastralNumber,address,convertString(use),area,appraisal,"x"};
-        archives.writeArchive(dataLand);
-        tax.addProperty(new Property(cadastralNumber,address,area,stratum,use,appraisal));
+        try {
+            archives.writeArchive(dataLand);
+            tax.addProperty(new Property(cadastralNumber,address,area,stratum,use,appraisal));
+        } catch (IOException e) {
+            io.showGraphicMessage("The file wasn't founded");
+        }
     }
 
     private String convertString(Use use){
@@ -265,7 +278,7 @@ public class Presenter {
         }
     }
 
-    public void modifyRanges() throws IOException {
+    public void modifyRanges() {
         byte option = io.showTypeModifyRangeMenu();
         switch (option){
             case 1:
@@ -288,7 +301,7 @@ public class Presenter {
         }
     }
 
-    private void modifyRangeCommercial() throws IOException {
+    private void modifyRangeCommercial() {
         byte indicator = io.readByteGraphics("enter the indicator to modify");
         byte modifier = io.showModifyRangeMenu();
         switch (modifier){
@@ -315,65 +328,113 @@ public class Presenter {
         io.showGraphicMessage("Successfully modified!");
     }
 
-    public void modifyInitValue(byte indicator, double newInitValue) throws IOException {
+    public void modifyInitValue(byte indicator, double newInitValue) {
         switch (indicator){
             case 1:
                 properties.setProperty("commercialRange",String.valueOf(newInitValue));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 2:
                 properties.setProperty("rateCommercialRange1",String.valueOf(newInitValue));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 3:
                 properties.setProperty("rateCommercialRange2",String.valueOf(newInitValue));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 4:
                 properties.setProperty("rateCommercialRange3",String.valueOf(newInitValue));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 5:
                 properties.setProperty("rateCommercialRange4",String.valueOf(newInitValue));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 6:
                 properties.setProperty("rateCommercialRange5",String.valueOf(newInitValue));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"Changed of init value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
         }
     }
 
-    public void modifyRateRange(byte indicator,double newRate) throws IOException {
+    public void modifyRateRange(byte indicator,double newRate) {
         switch (indicator){
             case 1:
                 properties.setProperty("rateCommercialRange1",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 2:
                 properties.setProperty("rateCommercialRange2",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 3:
                 properties.setProperty("rateCommercialRange3",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 4:
                 properties.setProperty("rateCommercialRange4",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 5:
                 properties.setProperty("rateCommercialRange5",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case 6:
                 properties.setProperty("commercialRange6",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate value " + indicator);
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
         }
     }
 
-    private void modifyResidential() throws IOException {
+    private void modifyResidential() {
         Stratum stratum = this.showMenuStratum();
         switch (stratum){
             case STRATUM1:
@@ -400,36 +461,60 @@ public class Presenter {
         io.showGraphicMessage("Successfully modified!");
     }
 
-    private void modifyRateResidential(Stratum stratum, double newRate) throws IOException {
+    private void modifyRateResidential(Stratum stratum, double newRate) {
         switch (stratum){
             case STRATUM1:
                 properties.setProperty("rateResidentialStratum1",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum "+ Stratum.STRATUM1.getIndicator());
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum "+ Stratum.STRATUM1.getIndicator());
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case STRATUM2:
                 properties.setProperty("rateResidentialStratum2",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM2.getIndicator());
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM2.getIndicator());
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case STRATUM3:
                 properties.setProperty("rateResidentialStratum3",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM3.getIndicator());
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM3.getIndicator());
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case STRATUM4:
                 properties.setProperty("rateResidentialStratum4",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM4.getIndicator());
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM4.getIndicator());
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case STRATUM5:
                 properties.setProperty("rateResidentialStratum5",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM5.getIndicator());
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM5.getIndicator());
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
             case STRATUM6:
                 properties.setProperty("rateResidentialStratum6",String.valueOf(newRate));
-                properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM6.getIndicator());
+                try {
+                    properties.store(new FileWriter(this.PATH_FILE_PROPERTIES),"changed of rate stratum " + Stratum.STRATUM6.getIndicator());
+                } catch (IOException e) {
+                    io.showGraphicMessage("The file wasn't founded");
+                }
                 break;
         }
     }
 
-    public void refresh() throws IOException {
+    public void refresh(){
         tax.getrRanges().clear();
         tax.getcRanges().clear();
         this.loadProperties();
