@@ -1,25 +1,27 @@
 package presenter;
 
 import model.*;
+import persistence.LoadArchives;
 import views.IoManager;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class Presenter {
 
     public final String PATH_FILE_PROPERTIES = "src/resources/config.properties";
-    public final String PATH_CSV = "src/data/propertyRecords.csv";
-    public final String PATH_TXT = "src/data/recordsLands";
 
-    private Tax tax;
+    Tax tax;
     IoManager io;
     Properties properties;
+    LoadArchives archives;
 
     public Presenter() throws IOException {
         tax = new Tax();
         io = new IoManager();
         properties = new Properties();
+        archives = new LoadArchives();
         this.loadPropertiesFile();
         initMenu();
     }
@@ -27,88 +29,14 @@ public class Presenter {
     public void loadPropertiesFile() throws IOException {
         properties.load(new FileReader(this.PATH_FILE_PROPERTIES));
         this.loadProperties();
-        this.loadRecordsLands();
+        this.readArchive();
     }
 
-    public void loadLandsCSV() throws IOException {
-        String line;
-        BufferedReader br = new BufferedReader(new FileReader(this.PATH_CSV));
-        while ((line = br.readLine()) != null){
-            String[] values = line.split(",");
-            if(values[0].equals(String.valueOf(15)) && values[1].equals(String.valueOf(1))){
-                long cadastralNumber;
-                if (values[5].matches("-?\\d+")){
-                     cadastralNumber = Long.parseLong(values[5]);
-                }else {
-                    cadastralNumber = (long) (Math.random()*1000000+1);
-                }
-                String address = values[3];
-                double area;
-                if (values[4].matches("-?\\d+")){
-                    area = Double.parseDouble(values[4])/10;
-                }else {
-                    area = (Math.random()*10000);
-                }
-                Stratum stratum = this.getStratumRandom();
-                Use use = this.getUseFile(String.valueOf(values[4]));
-                double appraisal = area*1000;
-                tax.addProperty(new Property(cadastralNumber,address,area,stratum,use,appraisal));
-            }
+    public void readArchive() throws IOException {
+        ArrayList<Property> properties = archives.loadLandsBoyaca();
+        for (Property property : properties) {
+            tax.addProperty(property);
         }
-    }
-
-    public void loadRecordsLands() throws IOException {
-        String line;
-        BufferedReader buffer = new BufferedReader(new FileReader(this.PATH_TXT));
-        while ((line = buffer.readLine())!= null){
-            String[] lands = line.split("-");
-            long cadastralNumber = Long.parseLong(lands[0]);
-            String address = lands[1];
-            double area = Double.parseDouble(lands[2]);
-            Stratum stratum = showMenuStratum(Byte.parseByte(lands[3]));
-            Use use = showMenuUse(Byte.parseByte(lands[4]));
-            double appraisal = Double.parseDouble(lands[5]);
-            tax.addProperty(new Property(cadastralNumber,address,area,stratum,use,appraisal));
-        }
-    }
-
-    private Use getUseFile(String word){
-        Use use;
-        switch (word){
-            case "D":
-                use = Use.COMMERCIAL;
-                break;
-            default:
-                use = Use.RESIDENTIAL;
-        }
-        return use;
-    }
-
-    private Stratum getStratumRandom(){
-        Stratum stratum = null;
-        int num = (int)(Math.random() * 6 + 1);
-        switch (num){
-            case 1:
-                stratum = Stratum.STRATUM1;
-                break;
-            case 2:
-                stratum = Stratum.STRATUM2;
-                break;
-            case 3:
-                stratum = Stratum.STRATUM3;
-                break;
-            case 4:
-                stratum = Stratum.STRATUM4;
-                break;
-            case 5:
-                stratum = Stratum.STRATUM5;
-                break;
-            case 6:
-                stratum = Stratum.STRATUM6;
-                break;
-        }
-
-        return stratum;
     }
 
     public void loadProperties(){
@@ -191,14 +119,29 @@ public class Presenter {
         }while (menuOption != 10);
     }
 
-    public void addLand(){
+    public void addLand() throws IOException {
         long cadastralNumber =  io.readLongGraphics("Enter the cadastral number: ");
         String address = io.readStringGraphics("Enter the address: ");
         double area = io.readDoubleGraphics("Enter the area: ");
         Stratum stratum = this.showMenuStratum();
         Use use = this.showMenuUse();
         double appraisal = io.readDoubleGraphics("Enter the appraisal: ");
+        Object[] dataLand = {"15","001",cadastralNumber,address,convertString(use),"0",area,"x"};
+        archives.writeArchive(dataLand);
         tax.addProperty(new Property(cadastralNumber,address,area,stratum,use,appraisal));
+    }
+
+    private String convertString(Use use){
+        String word = "";
+        switch (use){
+            case RESIDENTIAL:
+                word = "R";
+                break;
+            case COMMERCIAL:
+                word = "A";
+                break;
+        }
+        return word;
     }
 
     public Stratum showMenuStratum(){
@@ -227,48 +170,10 @@ public class Presenter {
         return stratum;
     }
 
-    public Stratum showMenuStratum(byte numberStratum){
-        Stratum stratum = null;
-        switch (numberStratum){
-            case 1:
-                stratum = Stratum.STRATUM1;
-                break;
-            case 2:
-                stratum = Stratum.STRATUM2;
-                break;
-            case 3:
-                stratum = Stratum.STRATUM3;
-                break;
-            case 4:
-                stratum = Stratum.STRATUM4;
-                break;
-            case 5:
-                stratum = Stratum.STRATUM5;
-                break;
-            case 6:
-                stratum = Stratum.STRATUM6;
-                break;
-        }
-        return stratum;
-    }
-
     public Use showMenuUse(){
         Use use = null;
         byte option =  io.showUseMenu();
         switch (option) {
-            case 1:
-                use = Use.COMMERCIAL;
-                break;
-            case 2:
-                use = Use.RESIDENTIAL;
-                break;
-        }
-        return use;
-    }
-
-    public Use showMenuUse(byte numberUse){
-        Use use = null;
-        switch (numberUse) {
             case 1:
                 use = Use.COMMERCIAL;
                 break;
