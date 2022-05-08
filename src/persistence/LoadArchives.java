@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 public class LoadArchives {
 
-    public final String PATH_FILE_PROPERTIES = "src/resources/config.properties";
     public final String PATH_BOYACA = "src/data/BOYACA_REG1.txt";
     public final String PATH_TXT = "src/data/recordsLands";
 
@@ -30,7 +29,7 @@ public class LoadArchives {
             return properties;
     }
 
-    public Stratum showMenuStratum(byte numberStratum){
+    private Stratum showMenuStratum(byte numberStratum){
         Stratum stratum = null;
         switch (numberStratum){
             case 1:
@@ -55,7 +54,7 @@ public class LoadArchives {
         return stratum;
     }
 
-    public Use showMenuUse(byte numberUse){
+    private Use showMenuUse(byte numberUse){
         Use use = null;
         switch (numberUse) {
             case 1:
@@ -70,6 +69,7 @@ public class LoadArchives {
 
     public void writeArchive(Object[] data) throws IOException {
         FileWriter source = new FileWriter(new File(this.PATH_BOYACA).getAbsoluteFile(),true);
+        source.write("\n");
         for (Object datum : data) {
             source.write(datum + "\t");
         }

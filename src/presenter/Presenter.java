@@ -126,7 +126,7 @@ public class Presenter {
         Stratum stratum = this.showMenuStratum();
         Use use = this.showMenuUse();
         double appraisal = io.readDoubleGraphics("Enter the appraisal: ");
-        Object[] dataLand = {"15","001",cadastralNumber,address,convertString(use),"0",area,"x"};
+        Object[] dataLand = {"15","001",cadastralNumber,address,convertString(use),area,appraisal,"x"};
         archives.writeArchive(dataLand);
         tax.addProperty(new Property(cadastralNumber,address,area,stratum,use,appraisal));
     }
@@ -429,9 +429,10 @@ public class Presenter {
         }
     }
 
-    public void refresh() {
+    public void refresh() throws IOException {
         tax.getrRanges().clear();
         tax.getcRanges().clear();
         this.loadProperties();
+        this.readArchive();
     }
 }
